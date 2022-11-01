@@ -16,6 +16,7 @@ const Restaurant = mongoose.model(
       type: Number,
       required: true,
     },
+    owner: String,
     products: Array,
     createdAr: {
       type: Date,

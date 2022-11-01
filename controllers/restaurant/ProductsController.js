@@ -96,9 +96,26 @@ const editProduct = async (req, res) => {
   }
 };
 
+const removeProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+    validId(productId);
+    const product = await Products.findOne({ _id: id });
+    if (!product) throw "Produto não encontrado!";
+
+    await Products.findOneAndDelete({ _id: product._id });
+    res.status(201).send("Produto deletado com sucesso!");
+
+  } catch (error) {
+    res.status(401).send({ error: error });
+  }
+};
+
 module.exports = {
   registerProduct,
   getAllProducts,
   getProductById,
   editProduct,
+  removeProduct,
 };
