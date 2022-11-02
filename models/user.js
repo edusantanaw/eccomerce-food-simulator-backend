@@ -4,7 +4,11 @@ const { Schema } = require("mongoose");
 const User = mongoose.model(
   "User",
   new Schema({
-    name: {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
       type: String,
       required: true,
     },
@@ -20,7 +24,46 @@ const User = mongoose.model(
       type: String,
     },
     perfilPhoto: String,
-    paymentMethods: Object,
+    paymentMethods: {
+      name: {
+        type: String,
+        required: true
+      },
+      cardNumber: {
+        type: Number,
+        required: true
+      },
+      cvv: {
+        type: Number,
+        required:true
+      },
+      date: {
+        type: Date,
+        required: true
+      }
+    },
+    address: {
+      street: {
+        type: String,
+        required: true,
+      },
+      number: {
+        type: Number,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      cep: {
+        type: Number,
+        required: true,
+      },
+    },
+    phoneNumber: {
+      type: Number,
+      required: true,
+    },
     createdAt: {
       type: Date,
       default: () => Date.now(),
@@ -32,9 +75,9 @@ const User = mongoose.model(
       immutable: false,
     },
     deletedAt: {
-        type: Boolean,
-        default: false
-    }
+      type: Boolean,
+      default: false,
+    },
   })
 );
 

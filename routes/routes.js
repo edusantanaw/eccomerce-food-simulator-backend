@@ -3,7 +3,11 @@ const {
   signin,
   getAllUsers,
   updateUser,
+  getUserById,
+  addAddress,
+  addPaymentMethod
 } = require("../controllers/user/UserController");
+
 const {
   registerRestaurant,
   getAllRestaurants,
@@ -25,9 +29,12 @@ const router = require("express").Router();
 
 // users
 router.get("/allusers", getAllUsers);
+router.get('/user/:id', getUserById)
 router.post("/newuser", createUser);
 router.post("/signin", signin);
 router.patch("/user/update/:id",imageUpload, updateUser);
+router.patch('/user/payment/:id', verifyToken, addPaymentMethod)
+router.patch('/user/address', verifyToken, addAddress)
 
 //restaurants
 router.get("/restaurants", verifyToken, getAllRestaurants);

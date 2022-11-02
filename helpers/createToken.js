@@ -10,9 +10,12 @@ const createUserToken = (user, res) => {
         msg:'Usuario foi autenticado com sucesso!',
         token: token,
         user: {
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phoneNumber: user.phoneNumber,
             id: user._id,
-            email: user.email
+            email: user.email,
+            photo: user.perfilPhoto
         }
     })
 }
