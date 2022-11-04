@@ -6,7 +6,7 @@ const verifyToken = (req, res, next) => {
   const token = getToken(req);
   if (!token) return res.status(401).send("Acesso negado!");
   try {
-    const verified = jwt.verify(token, "edusantanaw");
+    const verified = jwt.verify(token, "edu");
     req.user = verified;
     next();
   } catch (err) {

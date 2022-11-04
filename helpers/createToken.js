@@ -15,7 +15,8 @@ const createUserToken = (user, res) => {
             phoneNumber: user.phoneNumber,
             id: user._id,
             email: user.email,
-            photo: user.perfilPhoto
+            photo: user.perfilPhoto,
+            admin: user.admin
         }
     })
 }

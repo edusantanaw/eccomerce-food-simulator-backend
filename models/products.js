@@ -32,10 +32,6 @@ const Products = mongoose.model(
       type: Number,
       default: 0,
     },
-    restaurant: {
-      type: String,
-      requred: true,
-    },
     available: {
       type: Boolean,
       default: true,

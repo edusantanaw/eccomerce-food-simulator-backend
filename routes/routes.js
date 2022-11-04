@@ -5,14 +5,9 @@ const {
   updateUser,
   getUserById,
   addAddress,
-  addPaymentMethod
+  addPaymentMethod,
+  updatePassword,
 } = require("../controllers/user/UserController");
-
-const {
-  registerRestaurant,
-  getAllRestaurants,
-  updateRestaurant,
-} = require("../controllers/restaurant/RestaurantController");
 
 const {
   editProduct,
@@ -22,30 +17,25 @@ const {
   removeProduct,
 } = require("../controllers/restaurant/ProductsController");
 const verifyToken = require("../middlewares/verifyToken");
-
-const imageUpload = require('../middlewares/imageUpload')
-
+const imageUpload = require("../middlewares/imageUpload");
+const admin = require("../middlewares/admin");
 const router = require("express").Router();
 
 // users
 router.get("/allusers", getAllUsers);
-router.get('/user/:id', getUserById)
+router.get("/user/:id", getUserById);
 router.post("/newuser", createUser);
 router.post("/signin", signin);
-router.patch("/user/update/:id",imageUpload, updateUser);
-router.patch('/user/payment/:id', verifyToken, addPaymentMethod)
-router.patch('/user/address', verifyToken, addAddress)
-
-//restaurants
-router.get("/restaurants", verifyToken, getAllRestaurants);
-router.post("/registerrestaurant", verifyToken, registerRestaurant);
-router.patch("/restaurant/update", verifyToken, updateRestaurant);
+router.patch("/user/update/:id", imageUpload, updateUser);
+router.patch("/user/payment/:id", verifyToken, addPaymentMethod);
+router.patch("/user/address/:id", verifyToken, addAddress);
+router.patch("/user/password/:id", updatePassword);
 
 //products
 router.get("/products", verifyToken, getAllProducts);
 router.get("/products:id", verifyToken, getProductById);
-router.post("/resisterproducts", verifyToken, registerProduct);
-router.patch("/editproduct", verifyToken, editProduct);
-router.delete("/products/delete/:id", removeProduct);
+router.post("/product/register", admin,imageUpload, registerProduct);
+router.patch("/product/edit/:id", verifyToken, admin, editProduct);
+router.delete("/products/delete/:id", admin, removeProduct);
 
 module.exports = router;

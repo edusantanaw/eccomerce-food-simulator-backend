@@ -1,31 +1,26 @@
 const { existsOrError, validId } = require("../../helpers/existsOrError");
 const Products = require("../../models/products");
-const Restaurant = require("../../models/restaurant");
 
 const registerProduct = async (req, res) => {
-  const { name, category, price, restaurantId, description } = req.body;
+  const { name, category, price, description } = req.body;
   const image = req.files;
+  console.log(image)
   try {
     existsOrError(name, "O nome do produto é necessario!");
     existsOrError(category, "A categoria do produto é necessaria!");
     existsOrError(price, "O preço do produto é necessario!");
-    existsOrError(restaurantId, "O restaurante do produto é necessario");
     existsOrError(image, "A imagem do produto é necessaria!");
     existsOrError(description, "A descrição do produto é necessaria!");
 
     const existsProduct = await Products.findOne({ name: name });
     if (existsProduct) throw "Este produto já está cadastrado no sistema !";
 
-    const restaurantExists = await Restaurant.findOne({
-      restaurant: restaurantId,
-    });
     if (!restaurantExists) throw "Restaurante não encontrado!";
 
     const newProduct = new Products({
       name,
       category,
       price,
-      restaurant: restaurantId,
       image,
       description,
     });
@@ -63,6 +58,7 @@ const getProductById = async (req, res) => {
 
 const editProduct = async (req, res) => {
   const id = req.params.id;
+ 
   const { name, category, price, description, off, image, available } =
     req.body;
   try {

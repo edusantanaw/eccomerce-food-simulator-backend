@@ -23,6 +23,10 @@ const User = mongoose.model(
     restaurant: {
       type: String,
     },
+    admin: {
+      type: Boolean,
+      default : false
+    },
     perfilPhoto: String,
     paymentMethods: {
       name: {

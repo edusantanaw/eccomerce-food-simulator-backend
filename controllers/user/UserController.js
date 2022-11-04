@@ -53,9 +53,8 @@ const signin = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const userId = req.params.id;
-  const { firstName, lastName, email, phoneNumber } = req.body;
-  const image = req.files[0];
-  console.log(phoneNumber);
+  const { firstName, lastName, email, admin, phoneNumber } = req.body;
+  const image = req.files;
   try {
     validId(userId);
     if (!req.body || req.body.length === 0) throw "Nenhum dado atualizado!";
@@ -72,7 +71,8 @@ const updateUser = async (req, res) => {
         throw "Este email já está sendo usado por outro usuario!";
       user.email = email;
     }
-    if (image) user.perfilPhoto = image.path;
+    user.admin = admin
+    if (image.length > 0) user.perfilPhoto = image[0].path;
     await User.findByIdAndUpdate(
       { _id: user._id },
       { $set: user },
@@ -110,7 +110,6 @@ const getUserById = async (req, res) => {
 const addAddress = async (req, res) => {
   const id = req.params.id;
   const { street, number, city, cep } = req.body;
-
   try {
     validId(id);
     const user = await User.findOne({ _id: id });
@@ -143,7 +142,7 @@ const addAddress = async (req, res) => {
 const addPaymentMethod = async (req, res) =>{
   const id = req.params.id
   const {cardNumber, name, cvv, date } = req.body
-
+  console.log(req.body)
   try {
     validId(id)
     const user = await User.findOne({_id: id})
@@ -176,6 +175,42 @@ const addPaymentMethod = async (req, res) =>{
   }
 }
 
+const updatePassword = async (req, res)=> {
+  const id = req.params.id
+  const {password, newPassword, confirmPassword} = req.body
+
+  try {
+    validId(id)
+    const user= await User.findOne({_id: id})
+    if(!user) throw 'Usuario não encontrado!'
+    existsOrError(password, 'A senha atual é necessaria!')
+    existsOrError(newPassword, 'A nova senha  é necessaria!')
+    existsOrError(confirmPassword, 'A confirmação de senha é necessaria!')
+  
+    const checkPassword = await bcrypt.compare(password, user.password);
+    if(!checkPassword) throw 'Senha atual invalida!'
+    if(newPassword !== confirmPassword) throw 'As senhas devem ser iguais!'
+    
+    const salt = await bcrypt.genSalt(10)
+    const hashPassword = await bcrypt.hash(newPassword, salt)
+    delete password
+    delete newPassword
+    delete confirmPassword
+
+    user.password = hashPassword
+
+    await User.findOneAndUpdate(
+      {_id: user._id},
+      {$set: user},
+      {new: true}
+    )
+      res.status(201).send('Senha atualizada com sucesso!')
+  
+  } catch (error  ) {
+      res.status(400).send({error: error})
+  }
+}
+
 module.exports = {
   createUser,
   getUserById,
@@ -183,5 +218,6 @@ module.exports = {
   updateUser,
   addAddress,
   getAllUsers,
-  addPaymentMethod
+  addPaymentMethod,
+  updatePassword
 };

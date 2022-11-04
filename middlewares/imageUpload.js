@@ -4,7 +4,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const type = req.url.split('/')[1]
     if(type === 'user') cb(null, 'public/users')
-    else if(type === 'products') cb(null, 'public/products')
+    else if(type === 'product') cb(null, 'public/products')
     else cb(null, 'public/restaurant')
   }
   ,
