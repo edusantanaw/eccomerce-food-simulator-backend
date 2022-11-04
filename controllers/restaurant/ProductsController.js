@@ -4,7 +4,7 @@ const Products = require("../../models/products");
 const registerProduct = async (req, res) => {
   const { name, category, price, description } = req.body;
   const image = req.files;
-  console.log(image)
+
   try {
     existsOrError(name, "O nome do produto é necessario!");
     existsOrError(category, "A categoria do produto é necessaria!");
@@ -15,8 +15,6 @@ const registerProduct = async (req, res) => {
     const existsProduct = await Products.findOne({ name: name });
     if (existsProduct) throw "Este produto já está cadastrado no sistema !";
 
-    if (!restaurantExists) throw "Restaurante não encontrado!";
-
     const newProduct = new Products({
       name,
       category,
@@ -26,7 +24,8 @@ const registerProduct = async (req, res) => {
     });
 
     await newProduct.save();
-    req.status(200).send("Produto cadastrado com sucesso!");
+
+    res.status(200).send("Produto cadastrado com sucesso!");
   } catch (error) {
     res.status(401).send({ error: error });
   }
@@ -58,7 +57,7 @@ const getProductById = async (req, res) => {
 
 const editProduct = async (req, res) => {
   const id = req.params.id;
- 
+
   const { name, category, price, description, off, image, available } =
     req.body;
   try {
@@ -102,7 +101,18 @@ const removeProduct = async (req, res) => {
 
     await Products.findOneAndDelete({ _id: product._id });
     res.status(201).send("Produto deletado com sucesso!");
+  } catch (error) {
+    res.status(401).send({ error: error });
+  }
+};
 
+const getDeals = async (req, res) => {
+  try {
+    const deals = await Products.find().where("off").gt(0);
+    console.log(deals);
+    if (deals.lenght === 0) throw "Nenhuma promoção encontrada!";
+
+    res.staus(200).send(deals);
   } catch (error) {
     res.status(401).send({ error: error });
   }
@@ -114,4 +124,5 @@ module.exports = {
   getProductById,
   editProduct,
   removeProduct,
+  getDeals,
 };

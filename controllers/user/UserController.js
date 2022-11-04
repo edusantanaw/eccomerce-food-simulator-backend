@@ -22,7 +22,8 @@ const createUser = async (req, res) => {
     delete confirmPassword;
 
     const user = new User({
-      name: name,
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       password: hashPassword,
     });
