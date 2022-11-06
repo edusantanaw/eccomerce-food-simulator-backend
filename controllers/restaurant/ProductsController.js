@@ -46,10 +46,10 @@ const getProductById = async (req, res) => {
   const id = req.params.id;
   try {
     validId(id);
-    const product = await Products.findOne({ id: id });
+    const product = await Products.findOne({_id: id });
     if (!product) throw "Nenhum produto encontrado!";
 
-    res.status(200).send(product);
+    res.status(200).send([product]);
   } catch (error) {
     res.status(401).send({ error: error });
   }
@@ -58,8 +58,9 @@ const getProductById = async (req, res) => {
 const editProduct = async (req, res) => {
   const id = req.params.id;
 
-  const { name, category, price, description, off, image, available } =
+  const { name, category, price, description, off, available } =
     req.body;
+    const image = req.files
   try {
     validId(id);
     if (!req.body || req.body == null) throw "Nenhum dado atualizado!";
@@ -78,10 +79,10 @@ const editProduct = async (req, res) => {
     if (off) product.off = off;
     if (image) product.image = image;
     if (available) product.available = available;
-
+  
     await Products.findOneAndUpdate(
-      { $set: product },
       { _id: product._id },
+      { $set: product },
       { new: true }
     );
 
@@ -117,10 +118,8 @@ const filteByCategory = async (req, res) => {
 const getDeals = async (req, res) => {
   try {
     const deals = await Products.find().where("off").gt(0);
-    console.log(deals);
-    if (deals.lenght === 0) throw "Nenhuma promoção encontrada!";
-
-    res.staus(200).send(deals);
+    if (!deals) throw "Nenhuma promoção encontrada!";
+    res.status(200).send(deals);
   } catch (error) {
     res.status(401).send({ error: error });
   }

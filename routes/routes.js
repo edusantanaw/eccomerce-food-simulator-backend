@@ -16,8 +16,15 @@ const {
   registerProduct,
   removeProduct,
   getDeals,
-  filteByCategory
+  filteByCategory,
 } = require("../controllers/restaurant/ProductsController");
+
+const {
+  acceptOrDeclineOrder,
+  getAllOrders,
+  getOrderByUser,
+  order,
+} = require("../controllers/restaurant/OrderController");
 
 const verifyToken = require("../middlewares/verifyToken");
 const imageUpload = require("../middlewares/imageUpload");
@@ -36,12 +43,17 @@ router.patch("/user/password/:id", updatePassword);
 
 //products
 router.get("/products", verifyToken, getAllProducts);
-router.get('/products/deals', verifyToken, getDeals)
-router.get('/products/category/:category', verifyToken, filteByCategory)
-router.get("/products:id", verifyToken, getProductById);
+router.get("/products/deals", verifyToken, getDeals);
+router.get("/products/category/:category", verifyToken, filteByCategory);
+router.get("/products/:id", verifyToken, getProductById);
 router.post("/product/register", admin, imageUpload, registerProduct);
-router.patch("/product/edit/:id", verifyToken, admin, editProduct);
+router.patch("/product/edit/:id", verifyToken, imageUpload, admin, editProduct);
 router.delete("/products/delete/:id", admin, removeProduct);
 
+//orders
+router.get('/orders', admin, getAllOrders);
+router.get('/order/:id', verifyToken, getOrderByUser)
+router.post('/order/new', verifyToken, order )
+router.patch('/order/status/:id', admin, acceptOrDeclineOrder)
 
 module.exports = router;
