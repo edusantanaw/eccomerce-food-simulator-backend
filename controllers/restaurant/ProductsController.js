@@ -106,6 +106,14 @@ const removeProduct = async (req, res) => {
   }
 };
 
+const filteByCategory = async (req, res) => {
+  const category = req.params.category
+  const products = await Products.find({category: category})
+  if(!products || products.length === 0) return res.status(401).send({error: 'Nenhum produto encontrado!'})
+  res.status(200).send(products)
+}
+
+
 const getDeals = async (req, res) => {
   try {
     const deals = await Products.find().where("off").gt(0);
@@ -125,4 +133,5 @@ module.exports = {
   editProduct,
   removeProduct,
   getDeals,
+  filteByCategory
 };

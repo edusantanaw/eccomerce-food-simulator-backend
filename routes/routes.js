@@ -15,8 +15,10 @@ const {
   getProductById,
   registerProduct,
   removeProduct,
-  getDeals
+  getDeals,
+  filteByCategory
 } = require("../controllers/restaurant/ProductsController");
+
 const verifyToken = require("../middlewares/verifyToken");
 const imageUpload = require("../middlewares/imageUpload");
 const admin = require("../middlewares/admin");
@@ -35,6 +37,7 @@ router.patch("/user/password/:id", updatePassword);
 //products
 router.get("/products", verifyToken, getAllProducts);
 router.get('/products/deals', verifyToken, getDeals)
+router.get('/products/category/:category', verifyToken, filteByCategory)
 router.get("/products:id", verifyToken, getProductById);
 router.post("/product/register", admin, imageUpload, registerProduct);
 router.patch("/product/edit/:id", verifyToken, admin, editProduct);
