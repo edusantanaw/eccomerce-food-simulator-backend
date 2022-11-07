@@ -7,35 +7,31 @@ const { validId } = require("../../helpers/existsOrError");
 
 const order = async (req, res) => {
   // request must be an array of ids
-  const { requests } = req.body;
+  const requests = req.body;
+
   const token = getToken(req);
-  const user = getUserByToken(token);
-
+  const user = await getUserByToken(token);
   try {
-    if (!user) throw "Usuario não encontrado!";
-
-    //verify if all products exists
-    const products = requests
-      .filter(async (product) => {
-        const verifyExists = await Products.findOne({ _id: product });
-        if (!verifyExists) return product;
-      })
-      .map(
-        (products) =>
-          (products = `O produto com o id: ${products} não foi encontrado!`)
-      );
-
-    if (products) throw products;
+    if (!requests) throw "Os produtos são necessarios!";
+    const product = [];
+    for (let i = 0; i < requests.length; i++) {
+      const prod = {
+        product: await Products.findOne({ _id: requests[i].prod }),
+        quantity: requests[i].quantity === undefined ? 1 : requests[i].quantity,
+      };
+      product.push(prod);
+    }
+  
     const orders = await Order.find();
     const numberOrder = orders.length + 1;
 
-    const newOrder = new Order({
-      user: user._id,
-      products: requests,
+    const newOrder =  new Order({
+      client: user._id,
+      product: product,
       numberOrder: numberOrder,
       status: "pedding",
     });
-
+    console.log(newOrder)
     await newOrder.save();
 
     res.status(200).send("Pedido realizado com sucesso!");

@@ -3,7 +3,6 @@ const multer = require("multer");
 const storage = multer.diskStorage(
   {
     destination: (req, file, cb) => {
-    console.log(req.body.image)
     const type = req.url.split('/')[1]
     if(type === 'user') cb(null, 'public/users')
     else if(type === 'product'){
