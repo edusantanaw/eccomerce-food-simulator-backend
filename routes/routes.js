@@ -5,7 +5,6 @@ const {
   updateUser,
   getUserById,
   addAddress,
-  addPaymentMethod,
   updatePassword,
 } = require("../controllers/user/UserController");
 
@@ -21,7 +20,7 @@ const {
 
 const {
   acceptOrDeclineOrder,
-  getAllOrders,
+  getPeddingOrders,
   getOrderByUser,
   order,
 } = require("../controllers/restaurant/OrderController");
@@ -37,7 +36,6 @@ router.get("/user/:id", getUserById);
 router.post("/newuser", createUser);
 router.post("/signin", signin);
 router.patch("/user/update/:id", imageUpload, updateUser);
-router.patch("/user/payment/:id", verifyToken, addPaymentMethod);
 router.patch("/user/address/:id", verifyToken, addAddress);
 router.patch("/user/password/:id", updatePassword);
 
@@ -51,7 +49,7 @@ router.patch("/product/edit/:id", verifyToken, imageUpload, admin, editProduct);
 router.delete("/products/delete/:id", admin, removeProduct);
 
 //orders
-router.get('/orders', admin, getAllOrders);
+router.get('/orders', admin, getPeddingOrders);
 router.get('/order/:id', verifyToken, getOrderByUser)
 router.post('/order/new', verifyToken, order )
 router.patch('/order/status/:id', admin, acceptOrDeclineOrder)

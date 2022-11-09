@@ -28,24 +28,6 @@ const User = mongoose.model(
       default : false
     },
     perfilPhoto: String,
-    paymentMethods: {
-      name: {
-        type: String,
-        required: true
-      },
-      cardNumber: {
-        type: Number,
-        required: true
-      },
-      cvv: {
-        type: Number,
-        required:true
-      },
-      date: {
-        type: Date,
-        required: true
-      }
-    },
     address: {
       street: {
         type: String,

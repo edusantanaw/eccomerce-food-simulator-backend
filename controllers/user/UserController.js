@@ -140,41 +140,7 @@ const addAddress = async (req, res) => {
   }
 };
 
-const addPaymentMethod = async (req, res) =>{
-  const id = req.params.id
-  const {cardNumber, name, cvv, date } = req.body
-  console.log(req.body)
-  try {
-    validId(id)
-    const user = await User.findOne({_id: id})
-    if(!user) throw 'Usuario não encontrado!'
 
-    existsOrError(name, 'O nome do cartao é necessario!')
-    existsOrError(cardNumber, 'O numero do cartão é necessario!')
-    existsOrError(cvv, 'O cvv do cartão é necessario!')
-    existsOrError(date, 'A data de vencimento é necessaria!')
-
-    const card = {
-      name,
-      cardNumber,
-      cvv,
-      date
-    }
-    user.paymentMethods = card
-
-    await User.findOneAndUpdate(
-      {_id: user._id},
-      {$set: user},
-      {new: true}
-      
-    )
-    
-    res.status(201).send('Metodo de pagamento adicionado com sucesso!')
-    
-  } catch (error) {
-    res.status(401).send({error: error})
-  }
-}
 
 const updatePassword = async (req, res)=> {
   const id = req.params.id
@@ -219,6 +185,5 @@ module.exports = {
   updateUser,
   addAddress,
   getAllUsers,
-  addPaymentMethod,
   updatePassword
 };

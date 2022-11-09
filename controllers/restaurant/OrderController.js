@@ -21,17 +21,17 @@ const order = async (req, res) => {
       };
       product.push(prod);
     }
-  
+
     const orders = await Order.find();
     const numberOrder = orders.length + 1;
 
-    const newOrder =  new Order({
+    const newOrder = new Order({
       client: user._id,
       product: product,
       numberOrder: numberOrder,
       status: "pedding",
     });
-    console.log(newOrder)
+    console.log(newOrder);
     await newOrder.save();
 
     res.status(200).send("Pedido realizado com sucesso!");
@@ -45,20 +45,18 @@ const getOrderByUser = async (req, res) => {
 
   try {
     validId(id);
-    const order = await Order.findOne({ user: id });
+    const order = await Order.find().where({ user: id });
+    console.log(order);
     if (!order) throw "Nenhum pedido encontrado!";
-    const products = order.product;
 
-    if (products.length === 0) throw "Nenhum produto encontrado!";
-
-    res.status(200).send(products);
+    res.status(200).send(order);
   } catch (error) {
     res.status(400).send({ error: error });
   }
 };
 
-const getAllOrders = async (req, res) => {
-  const orders = await Order.find();
+const getPeddingOrders = async (req, res) => {
+  const orders = await Order.find().where({ status: "pedding" });
   if (!orders || orders.length === 0)
     return res.status(400).send({ error: "Nenhum pedido encontrado!" });
   res.status(200).send(orders);
@@ -72,10 +70,8 @@ const acceptOrDeclineOrder = async (req, res) => {
     validId(id);
     const order = await Order.findOne({ _id: id });
     if (!order) throw "Pedido não encontrado!";
-    newStatus === "accepted"
-      ? (order.status = "accepted")
-      : (order.status = "denied");
-
+    newStatus ? (order.status = "accepted") : (order.status = "denied");
+    console.log(order.status);
     await Order.findByIdAndUpdate(
       { _id: order._id },
       { $set: order },
@@ -88,4 +84,9 @@ const acceptOrDeclineOrder = async (req, res) => {
   }
 };
 
-module.exports = { order, getOrderByUser, getAllOrders, acceptOrDeclineOrder };
+module.exports = {
+  order,
+  getOrderByUser,
+  getPeddingOrders,
+  acceptOrDeclineOrder,
+};
