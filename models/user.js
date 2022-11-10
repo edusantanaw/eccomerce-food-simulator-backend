@@ -20,35 +20,28 @@ const User = mongoose.model(
       type: String,
       required: true,
     },
-    restaurant: {
-      type: String,
-    },
+
     admin: {
       type: Boolean,
-      default : false
+      default: false,
     },
     perfilPhoto: String,
     address: {
       street: {
         type: String,
-        required: true,
       },
       number: {
         type: Number,
-        required: true,
       },
       city: {
         type: String,
-        required: true,
       },
       cep: {
         type: Number,
-        required: true,
       },
     },
     phoneNumber: {
       type: Number,
-      required: true,
     },
     createdAt: {
       type: Date,

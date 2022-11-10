@@ -45,8 +45,7 @@ const getOrderByUser = async (req, res) => {
 
   try {
     validId(id);
-    const order = await Order.find().where({ user: id });
-    console.log(order);
+    const order = await Order.find({client: id })
     if (!order) throw "Nenhum pedido encontrado!";
 
     res.status(200).send(order);

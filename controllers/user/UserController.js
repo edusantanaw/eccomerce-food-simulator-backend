@@ -4,11 +4,11 @@ const User = require("../../models/user");
 const bcrypt = require("bcrypt");
 
 const createUser = async (req, res) => {
-  const { firstName, lastName, email, password, confirmPassword } = req;
-
+  const { firstName, lastName, email, password, confirmPassword } = req.body;
+  console.log(req.body)
   try {
     existsOrError(firstName, "O primeiro nome é necessario!");
-    existsOrError(lastName, "O primeiro nome é necessario!");
+    existsOrError(lastName, "O segundo nome é necessario!");
     existsOrError(email, "O email é necessario!");
     existsOrError(password, "A senha é necessaria!");
     existsOrError(confirmPassword, "A confirmarção d2e senha é necessaria!");
