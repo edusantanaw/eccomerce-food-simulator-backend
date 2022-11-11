@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const createUser = async (req, res) => {
   const { firstName, lastName, email, password, confirmPassword } = req.body;
-  console.log(req.body)
+  console.log(req.body);
   try {
     existsOrError(firstName, "O primeiro nome é necessario!");
     existsOrError(lastName, "O segundo nome é necessario!");
@@ -54,17 +54,21 @@ const signin = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const userId = req.params.id;
-  const { firstName, lastName, email, admin, phoneNumber } = req.body;
+  const { firstName, lastName, email, phoneNumber } = req.body;
   const image = req.files;
   try {
     validId(userId);
     if (!req.body || req.body.length === 0) throw "Nenhum dado atualizado!";
     const user = await User.findOne({ _id: userId });
     if (!user) throw "Usuario não encontrado!";
+    existsOrError(firstName, "O nome é necessario!");
+    existsOrError(lastName, "O sobrenome é necessario!");
+    existsOrError(phoneNumber, "O numbero de telefone é necessario!");
+    existsOrError(email, "O email é necessario!");
 
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.phoneNumber = phoneNumber;
 
     if (email && user.email !== email) {
       const verifyEmail = await User.find({ email: email });
@@ -72,7 +76,6 @@ const updateUser = async (req, res) => {
         throw "Este email já está sendo usado por outro usuario!";
       user.email = email;
     }
-    user.admin = admin
     if (image.length > 0) user.perfilPhoto = image[0].path;
     await User.findByIdAndUpdate(
       { _id: user._id },
@@ -140,43 +143,40 @@ const addAddress = async (req, res) => {
   }
 };
 
-
-
-const updatePassword = async (req, res)=> {
-  const id = req.params.id
-  const {password, newPassword, confirmPassword} = req.body
+const updatePassword = async (req, res) => {
+  const id = req.params.id;
+  const { password, newPassword, confirmPassword } = req.body;
 
   try {
-    validId(id)
-    const user= await User.findOne({_id: id})
-    if(!user) throw 'Usuario não encontrado!'
-    existsOrError(password, 'A senha atual é necessaria!')
-    existsOrError(newPassword, 'A nova senha  é necessaria!')
-    existsOrError(confirmPassword, 'A confirmação de senha é necessaria!')
-  
-    const checkPassword = await bcrypt.compare(password, user.password);
-    if(!checkPassword) throw 'Senha atual invalida!'
-    if(newPassword !== confirmPassword) throw 'As senhas devem ser iguais!'
-    
-    const salt = await bcrypt.genSalt(10)
-    const hashPassword = await bcrypt.hash(newPassword, salt)
-    delete password
-    delete newPassword
-    delete confirmPassword
+    validId(id);
+    const user = await User.findOne({ _id: id });
+    if (!user) throw "Usuario não encontrado!";
+    existsOrError(password, "A senha atual é necessaria!");
+    existsOrError(newPassword, "A nova senha  é necessaria!");
+    existsOrError(confirmPassword, "A confirmação de senha é necessaria!");
 
-    user.password = hashPassword
+    const checkPassword = await bcrypt.compare(password, user.password);
+    if (!checkPassword) throw "Senha atual invalida!";
+    if (newPassword !== confirmPassword) throw "As senhas devem ser iguais!";
+
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(newPassword, salt);
+    delete password;
+    delete newPassword;
+    delete confirmPassword;
+
+    user.password = hashPassword;
 
     await User.findOneAndUpdate(
-      {_id: user._id},
-      {$set: user},
-      {new: true}
-    )
-      res.status(201).send('Senha atualizada com sucesso!')
-  
-  } catch (error  ) {
-      res.status(400).send({error: error})
+      { _id: user._id },
+      { $set: user },
+      { new: true }
+    );
+    res.status(201).send("Senha atualizada com sucesso!");
+  } catch (error) {
+    res.status(400).send({ error: error });
   }
-}
+};
 
 module.exports = {
   createUser,
@@ -185,5 +185,5 @@ module.exports = {
   updateUser,
   addAddress,
   getAllUsers,
-  updatePassword
+  updatePassword,
 };

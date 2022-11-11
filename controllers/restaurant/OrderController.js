@@ -1,14 +1,11 @@
 const Order = require("../../models/order");
 const Products = require("../../models/products");
-const User = require("../../models/user");
 const getToken = require("../../helpers/getToken");
 const getUserByToken = require("../../helpers/getUserByToken");
 const { validId } = require("../../helpers/existsOrError");
 
 const order = async (req, res) => {
-  // request must be an array of ids
   const requests = req.body;
-
   const token = getToken(req);
   const user = await getUserByToken(token);
   try {
@@ -31,7 +28,7 @@ const order = async (req, res) => {
       numberOrder: numberOrder,
       status: "pedding",
     });
-    console.log(newOrder);
+
     await newOrder.save();
 
     res.status(200).send("Pedido realizado com sucesso!");
@@ -45,7 +42,7 @@ const getOrderByUser = async (req, res) => {
 
   try {
     validId(id);
-    const order = await Order.find({client: id })
+    const order = await Order.find({ client: id });
     if (!order) throw "Nenhum pedido encontrado!";
 
     res.status(200).send(order);
@@ -70,7 +67,7 @@ const acceptOrDeclineOrder = async (req, res) => {
     const order = await Order.findOne({ _id: id });
     if (!order) throw "Pedido não encontrado!";
     newStatus ? (order.status = "accepted") : (order.status = "denied");
-    console.log(order.status);
+
     await Order.findByIdAndUpdate(
       { _id: order._id },
       { $set: order },

@@ -14,13 +14,32 @@ const registerProduct = async (req, res) => {
 
     const existsProduct = await Products.findOne({ name: name });
     if (existsProduct) throw "Este produto já está cadastrado no sistema !";
+    let off = 0;
 
+    switch (category) {
+      case "hamburder": {
+        off = 0.2;
+        break
+      }
+      case "pizza": {
+        off = 0.4;
+        break
+      }
+      case "cake": {
+        off = 0.1;
+        break
+      }
+      default:
+        off = 0;
+    }
+    console.log(off)
     const newProduct = new Products({
       name,
       category,
       price,
       image,
       description,
+      off,
     });
 
     await newProduct.save();
@@ -46,7 +65,7 @@ const getProductById = async (req, res) => {
   const id = req.params.id;
   try {
     validId(id);
-    const product = await Products.findOne({_id: id });
+    const product = await Products.findOne({ _id: id });
     if (!product) throw "Nenhum produto encontrado!";
 
     res.status(200).send([product]);
@@ -58,9 +77,8 @@ const getProductById = async (req, res) => {
 const editProduct = async (req, res) => {
   const id = req.params.id;
 
-  const { name, category, price, description, off, available } =
-    req.body;
-    const image = req.files
+  const { name, category, price, description, available } = req.body;
+  const image = req.files;
   try {
     validId(id);
     if (!req.body || req.body == null) throw "Nenhum dado atualizado!";
@@ -69,17 +87,17 @@ const editProduct = async (req, res) => {
 
     if (name) {
       const existsName = await Products.find({ name: name });
-      if (existsName) throw "Este nome de produto já está sendo usado!";
+      console.log(existsName);
+      if (existsName.length > 0)
+        throw "Este nome de produto já está sendo usado!";
       product.name = name;
     }
 
     if (category) product.category = category;
     if (price) product.price = price;
     if (description) product.description = description;
-    if (off) product.off = off;
     if (image) product.image = image;
     if (available) product.available = available;
-  
     await Products.findOneAndUpdate(
       { _id: product._id },
       { $set: product },
@@ -108,12 +126,12 @@ const removeProduct = async (req, res) => {
 };
 
 const filteByCategory = async (req, res) => {
-  const category = req.params.category
-  const products = await Products.find({category: category})
-  if(!products || products.length === 0) return res.status(401).send({error: 'Nenhum produto encontrado!'})
-  res.status(200).send(products)
-}
-
+  const category = req.params.category;
+  const products = await Products.find({ category: category });
+  if (!products || products.length === 0)
+    return res.status(401).send({ error: "Nenhum produto encontrado!" });
+  res.status(200).send(products);
+};
 
 const getDeals = async (req, res) => {
   try {
@@ -132,5 +150,5 @@ module.exports = {
   editProduct,
   removeProduct,
   getDeals,
-  filteByCategory
+  filteByCategory,
 };
